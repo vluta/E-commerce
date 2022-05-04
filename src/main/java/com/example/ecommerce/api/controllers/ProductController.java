@@ -96,6 +96,25 @@ public class ProductController {
         return new ResponseEntity<>(productDTO, HttpStatus.CREATED);
     }
 
+    /*@PostMapping(value = "{speaker-id}/sessions",consumes = "application/json")
+    public ResponseEntity<SessionDTO> createSession(@PathVariable("product-id") String speakerId, @Valid @RequestBody sessionCreationDTO sessionCreationDTO, Errors errors) {
+
+        //1) find speaker to add to session
+        Speaker speaker = speakerService.findById(UUID.fromString(speakerId)).get();
+
+        //2) create session entity from creation DTO
+        Session session = sessionMapper.toSession(sessionCreationDTO);
+
+        //3) add speaker to session entity
+        session.addSpeaker(speaker);
+
+        //4) save entry to db
+        sessionService.save(session);
+
+    }*/
+
+
+
     // add a category to a certain product by id
     @PutMapping(value = "{product-id}/categories/{category-id}")
     public ResponseEntity addCategoryToProductById(@PathVariable("product-id") String productId, @PathVariable("category-id") String categoryId) {
@@ -119,6 +138,41 @@ public class ProductController {
         return new ResponseEntity<>(HttpStatus.OK);
         //ProductDTO productDTO = productMapper.toDto(productService.findById(UUID.fromString(productId)).get());
         //Set<Category> categories = productService.findById(UUID.fromString(productId)).get().getCategories();
+    }
+
+    // delete a speaker-session relationship
+    @DeleteMapping("{product-id}/categories/{category-id}")
+    @ResponseStatus(code = HttpStatus.NO_CONTENT)
+    public void deleteProductCategoryRelation (@PathVariable("product-id") String productId, @PathVariable("category-id") String categoryId) {
+
+        //1) get product and category from db
+        Optional<Product> optProduct = productService.findById(UUID.fromString(productId));
+        Product product = optProduct.get();
+        if(!optProduct.isPresent()) {
+            throw new ApiRequestException(ApiRequestException.Exceptions.getDescription(ApiRequestException.Exceptions.ID_NOT_FOUND, productId));
+        }
+        Optional<Category> optCategory = categoryService.findById(UUID.fromString(categoryId));
+        Category category = optCategory.get();
+        if(!optCategory.isPresent()) {
+            throw new ApiRequestException(ApiRequestException.Exceptions.getDescription(ApiRequestException.Exceptions.ID_NOT_FOUND, categoryId));
+        }
+
+        //2) delete old product and category from db
+        //productService.deleteById(UUID.fromString(productId));
+        categoryService.deleteById(UUID.fromString(categoryId));
+
+        //3) find category from field set and delete it
+        //product.removeCategory(UUID.fromString(categoryId));
+
+        //4) find product from field set and delete it
+        //category.removeProduct(UUID.fromString(productId));
+
+        //5) save new product in db; entry in link table should be deleted automatically
+        //productService.save(product);
+
+        //6) save new category in db; entry in link table should be deleted automatically
+        //categoryService.save(category);
+
     }
 
     // delete a participant by id

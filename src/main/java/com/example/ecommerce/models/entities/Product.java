@@ -26,6 +26,7 @@ public class Product {
     @Column(name = "name", nullable = false)
     private String name;
 
+    // NOTE: prices are by default stored in USD value
     @Column(name = "price", nullable = false)
     private Double price;
 
@@ -39,7 +40,7 @@ public class Product {
     private String pictureUrl;
 
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
     @JoinTable(name = "category_product", joinColumns = @JoinColumn(name = "product_id"),
             inverseJoinColumns = @JoinColumn(name = "category_id"))
     Set<Category> categories = new HashSet<>();

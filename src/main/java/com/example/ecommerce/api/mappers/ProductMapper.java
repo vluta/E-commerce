@@ -13,7 +13,7 @@ public class ProductMapper {
     public ProductDTO toDto(Product product) {
 
         ProductDTO productDTO = mapper.map(product, ProductDTO.class);
-
+        productDTO.setDisplayPrice();
         return productDTO;
     }
 
