@@ -6,7 +6,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.*;
 import okhttp3.*;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Component;
 
+@Component
 public class ExchangeRatesConfig {
 
     private static ObjectMapper mapper = new ObjectMapper();
@@ -32,7 +34,6 @@ public class ExchangeRatesConfig {
         Response response = client.newCall(request).execute();
         //System.out.println(response.body().string());
 
-
         String body = response.body().string();
         JsonNode bodyNode = mapper.readTree(body);
 
@@ -47,7 +48,7 @@ public class ExchangeRatesConfig {
         SEK = bodyNode.findValue("SEK").floatValue();
         NZD = bodyNode.findValue("NZD").floatValue();
 
-        /*System.out.println(String.valueOf(USD));
+        System.out.println(String.valueOf(USD));
         System.out.println(String.valueOf(EUR));
         System.out.println(String.valueOf(JPY));
         System.out.println(String.valueOf(GBP));
@@ -56,7 +57,7 @@ public class ExchangeRatesConfig {
         System.out.println(String.valueOf(CHF));
         System.out.println(String.valueOf(CNY));
         System.out.println(String.valueOf(SEK));
-        System.out.println(String.valueOf(NZD));*/
+        System.out.println(String.valueOf(NZD));
 
         /*{
             "base": "USD",

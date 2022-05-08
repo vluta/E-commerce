@@ -7,6 +7,7 @@ import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
@@ -30,9 +31,6 @@ public class Product {
     @Column(name = "price", nullable = false)
     private Double price;
 
-    //@Column(name = "quantity_available", nullable = false)
-    //private Double quantAvailable;
-
     @Column(name = "description")
     private String description;
 
@@ -44,6 +42,9 @@ public class Product {
     @JoinTable(name = "category_product", joinColumns = @JoinColumn(name = "product_id"),
             inverseJoinColumns = @JoinColumn(name = "category_id"))
     Set<Category> categories = new HashSet<>();
+
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
+    private List<Stock> stocks;
 
     public void addCategory(Category category) {
         this.categories.add(category);

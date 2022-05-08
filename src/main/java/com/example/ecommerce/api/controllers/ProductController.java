@@ -2,8 +2,10 @@ package com.example.ecommerce.api.controllers;
 
 import com.example.ecommerce.api.mappers.CategoryMapper;
 import com.example.ecommerce.api.mappers.ProductMapper;
+import com.example.ecommerce.config.ExchangeRatesConfig;
 import com.example.ecommerce.exceptions.ApiRequestException;
 import com.example.ecommerce.models.DTO.CategoryDTO;
+import com.example.ecommerce.models.DTO.ProductCreationDTO;
 import com.example.ecommerce.models.DTO.ProductDTO;
 import com.example.ecommerce.models.entities.Category;
 import com.example.ecommerce.models.entities.Product;
@@ -18,6 +20,7 @@ import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -27,12 +30,14 @@ import java.util.stream.Collectors;
 public class ProductController {
 
     @Autowired
+    private ExchangeRatesConfig exchangeRatesConfig;
     private ProductService productService;
     private CategoryService categoryService;
     private ProductMapper productMapper;
     private CategoryMapper categoryMapper;
 
-    public ProductController(ProductService productService, CategoryService categoryService, ProductMapper productMapper, CategoryMapper categoryMapper) {
+    public ProductController(ExchangeRatesConfig exchangeRatesConfig, ProductService productService, CategoryService categoryService, ProductMapper productMapper, CategoryMapper categoryMapper) {
+        this.exchangeRatesConfig = exchangeRatesConfig;
         this.productService = productService;
         this.categoryService = categoryService;
         this.productMapper = productMapper;
@@ -41,9 +46,12 @@ public class ProductController {
 
     //get a product by id
     @GetMapping("{product-id}")
-    public ResponseEntity<ProductDTO> getProductById(@PathVariable("product-id") String id) {
+    public ResponseEntity<ProductDTO> getProductById(@PathVariable("product-id") String id) throws IOException {
         Optional<Product> optProduct = productService.findById(UUID.fromString(id));
         if(optProduct.isPresent()) {
+            // refresh exchange rates
+            //exchangeRatesConfig.setExchangeRatesOnDemand();
+
             return new ResponseEntity<>(productMapper.toDto(optProduct.get()), HttpStatus.OK);
         }
         else {
@@ -84,14 +92,16 @@ public class ProductController {
 
     //create a product
     @PostMapping(consumes = "application/json")
-    public ResponseEntity<ProductDTO> createProduct(@Valid @RequestBody ProductDTO productDTO, Errors errors) {
+    public ResponseEntity<ProductDTO> createProduct(@Valid @RequestBody ProductCreationDTO productCreationDTO, Errors errors) {
 
-        Product product = productMapper.toProduct(productDTO);
-        //ProductDTO productDTO = mapper.toDto(product);
+
         if (errors.hasFieldErrors()) {
             throw new ApiRequestException(ApiRequestException.Exceptions.getDescription(ApiRequestException.Exceptions.BAD_INPUT));
         }
 
+        Product product = productMapper.toProduct(productCreationDTO);
+
+        ProductDTO productDTO = productMapper.toDto(product);
         productService.save(product);
         return new ResponseEntity<>(productDTO, HttpStatus.CREATED);
     }
