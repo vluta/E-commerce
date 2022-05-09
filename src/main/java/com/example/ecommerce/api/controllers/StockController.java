@@ -3,6 +3,7 @@ package com.example.ecommerce.api.controllers;
 import com.example.ecommerce.api.mappers.CategoryMapper;
 import com.example.ecommerce.api.mappers.ProductMapper;
 import com.example.ecommerce.api.mappers.StockMapper;
+import com.example.ecommerce.api.utils.ExpiredStockMigrationTask;
 import com.example.ecommerce.config.ExchangeRatesConfig;
 import com.example.ecommerce.exceptions.ApiRequestException;
 import com.example.ecommerce.models.DTO.*;
@@ -39,12 +40,15 @@ public class StockController {
     private StockMapper stockMapper;
     private ProductService productService;
     private ProductMapper productMapper;
+    private ExpiredStockMigrationTask expiredStockMigrationTask;
 
-    public StockController(StockService stockService, StockMapper stockMapper, ProductService productService, ProductMapper productMapper) {
+    public StockController(StockService stockService, StockMapper stockMapper, ProductService productService, ProductMapper productMapper,
+                           ExpiredStockMigrationTask expiredStockMigrationTask) {
         this.stockService = stockService;
         this.stockMapper = stockMapper;
         this.productService = productService;
         this.productMapper = productMapper;
+        this.expiredStockMigrationTask = expiredStockMigrationTask;
     }
 
     //get a stock by product-id
@@ -111,6 +115,10 @@ public class StockController {
         else {
             throw new ApiRequestException(ApiRequestException.Exceptions.getDescription(ApiRequestException.Exceptions.ID_NOT_FOUND, id.toString()));
         }
+
+        //test expiredStock migration method
+        //expiredStockMigrationTask.migrateExpiredStockOnDemand();
+
 
         stockService.save(stock);
 

@@ -30,6 +30,8 @@ public class StockService implements Serializable {
         this.messageSender = messageSender;
     }
 
+    public List<Stock> findAll() { return stockRepository.findAll(); }
+
     public Optional<Stock> findById(UUID id) {
         return stockRepository.findById(id);
     }

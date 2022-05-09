@@ -1,5 +1,6 @@
 cron:
   expression: 0 0 0 ? * * *
+  #expiration: * * 0 * * ? *
 
 currency:
   default: EUR
