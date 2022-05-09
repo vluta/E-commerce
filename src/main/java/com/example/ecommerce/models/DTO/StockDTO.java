@@ -12,7 +12,6 @@ public class StockDTO {
     private int nrUnits;
     private LocalDate creationDate;
     private LocalDate expDate;
-    private Product product;
 
     public int getNrUnits() {
         return nrUnits;
@@ -36,13 +35,5 @@ public class StockDTO {
 
     public void setExpDate(LocalDate expDate) {
         this.expDate = expDate;
-    }
-
-    public Product getProduct() {
-        return product;
-    }
-
-    public void setProduct(Product product) {
-        this.product = product;
     }
 }

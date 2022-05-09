@@ -20,6 +20,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
 
+import javax.jms.JMSException;
 import javax.validation.Valid;
 import java.io.IOException;
 import java.time.LocalDate;
@@ -103,9 +104,9 @@ public class StockController {
         Stock stock = stockMapper.toStock(stockCreationDTO);
         stock.setCreationDate(LocalDate.now());
 
-        Optional<Stock> optStock = stockService.findById(UUID.fromString(id));
-        if(optStock.isPresent()) {
-            stock.setProduct(productService.findById(UUID.fromString(id)).get());
+        Optional<Product> optProduct = productService.findById(UUID.fromString(id));
+        if(optProduct.isPresent()) {
+            stock.setProduct(optProduct.get());
         }
         else {
             throw new ApiRequestException(ApiRequestException.Exceptions.getDescription(ApiRequestException.Exceptions.ID_NOT_FOUND, id.toString()));
@@ -119,10 +120,10 @@ public class StockController {
 
     //place an order and update stock
     @PatchMapping("/order")
-    public ResponseEntity placeOrder(@Valid @RequestBody Order order, Errors errors) {
+    public ResponseEntity placeOrder(@Valid @RequestBody Order order, Errors errors) throws JMSException {
 
         //check if response statuses are ok
-        try {
+        /*try {
             stockService.updateStock(order);
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (Exception e) {
@@ -130,7 +131,10 @@ public class StockController {
             System.out.println("An exception occured.");
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
             //throw new ApiRequestException(ApiRequestException.Exceptions.getDescription(ApiRequestException.Exceptions.ID_NOT_FOUND, id.toString()));
-        }
+        }*/
+
+        stockService.updateStock(order);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @DeleteMapping("{stock-id}")

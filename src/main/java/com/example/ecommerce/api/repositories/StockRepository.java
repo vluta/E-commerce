@@ -16,7 +16,7 @@ public interface StockRepository extends JpaRepository<Stock, UUID> {
     @Override
     Optional<Stock> findById(UUID uuid);
 
-    List<Stock> findByProduct_IdOrderByCreationDateAsc(UUID id, Sort sort);
+    List<Stock> findByProductId(UUID id, Sort sort);
 
     @Override
     void deleteById(UUID uuid);

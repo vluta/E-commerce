@@ -3,3 +3,6 @@ cron:
 
 currency:
   default: EUR
+
+#ActiveMQ properties
+#Define JMS template

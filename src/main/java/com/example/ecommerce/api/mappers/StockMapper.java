@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class StockMapper {
 
-    ModelMapper mapper = new ModelMapper();
+    private ModelMapper mapper = new ModelMapper();
 
     public StockDTO toDto(Stock stock) {
 
@@ -27,4 +27,5 @@ public class StockMapper {
         Stock stock = mapper.map(stockCreationDTO, Stock.class);
         return stock;
     }
+
 }

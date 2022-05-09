@@ -30,14 +30,12 @@ import java.util.stream.Collectors;
 public class ProductController {
 
     @Autowired
-    private ExchangeRatesConfig exchangeRatesConfig;
     private ProductService productService;
     private CategoryService categoryService;
     private ProductMapper productMapper;
     private CategoryMapper categoryMapper;
 
-    public ProductController(ExchangeRatesConfig exchangeRatesConfig, ProductService productService, CategoryService categoryService, ProductMapper productMapper, CategoryMapper categoryMapper) {
-        this.exchangeRatesConfig = exchangeRatesConfig;
+    public ProductController(ProductService productService, CategoryService categoryService, ProductMapper productMapper, CategoryMapper categoryMapper) {
         this.productService = productService;
         this.categoryService = categoryService;
         this.productMapper = productMapper;
@@ -94,6 +92,8 @@ public class ProductController {
     @PostMapping(consumes = "application/json")
     public ResponseEntity<ProductDTO> createProduct(@Valid @RequestBody ProductCreationDTO productCreationDTO, Errors errors) {
 
+        //TO DO
+        //implement manual validators
 
         if (errors.hasFieldErrors()) {
             throw new ApiRequestException(ApiRequestException.Exceptions.getDescription(ApiRequestException.Exceptions.BAD_INPUT));
@@ -129,18 +129,18 @@ public class ProductController {
     @PutMapping(value = "{product-id}/categories/{category-id}")
     public ResponseEntity addCategoryToProductById(@PathVariable("product-id") String productId, @PathVariable("category-id") String categoryId) {
 
+        //TO DO
+        //add exception to validate user id
+
         //Category category = categoryMapper.toCategory(categoryDTO);
         //category.setProductCollection();
+
 
         // 1) add category to product
         Product product = productService.findById(UUID.fromString(productId)).get();
         Category category = categoryService.findById(UUID.fromString(categoryId)).get();
         product.addCategory(category);
         productService.save(product);
-
-        // 2) add product to category
-        category.addProduct(product);
-        categoryService.save(category);
 
         // TO DO: fix this method
         //productService.addCategory(categories, UUID.fromString(productId));

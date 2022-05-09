@@ -16,7 +16,6 @@ public class ProductDTO {
     private String displayPrice;
 
     //configured value does not bind at runtime
-    //@Value("${currency.default}")
     private String currency;
 
     private float currencyRate;
@@ -31,9 +30,9 @@ public class ProductDTO {
         return currencyRate;
     }
 
-    public void setCurrencyRate() {
+    public void setCurrencyRate(String currency) {
 
-        currency = "EUR";
+        this.currency = currency;
 
         System.out.println("DTO currency is: " + currency);
 
@@ -65,7 +64,7 @@ public class ProductDTO {
         return displayPrice;
     }
 
-    public void setDisplayPrice() {
+    public void calcDisplayPrice() {
         this.displayPrice = String.valueOf(price.floatValue() * currencyRate + " " + currency);
     }
 

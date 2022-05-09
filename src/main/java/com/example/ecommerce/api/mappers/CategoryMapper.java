@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class CategoryMapper {
 
-    ModelMapper mapper = new ModelMapper();
+    private ModelMapper mapper = new ModelMapper();
 
     public CategoryDTO toDto(Category category) {
 
