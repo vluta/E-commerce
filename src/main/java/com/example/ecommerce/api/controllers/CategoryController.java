@@ -1,14 +1,10 @@
 package com.example.ecommerce.api.controllers;
 
 import com.example.ecommerce.api.mappers.CategoryMapper;
-import com.example.ecommerce.api.mappers.ProductMapper;
 import com.example.ecommerce.exceptions.ApiRequestException;
 import com.example.ecommerce.models.DTO.CategoryDTO;
-import com.example.ecommerce.models.DTO.ProductDTO;
 import com.example.ecommerce.models.entities.Category;
-import com.example.ecommerce.models.entities.Product;
 import com.example.ecommerce.services.CategoryService;
-import com.example.ecommerce.services.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
@@ -17,10 +13,8 @@ import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping(path="/categories", produces = "application/json")
@@ -61,9 +55,6 @@ public class CategoryController {
         return new ResponseEntity<>(categoryDTO, HttpStatus.CREATED);
     }
 
-    // delete a participant by id
-    // DELETE method may be implemented with ResponseEntity
-    // DOES NOT WORK FOR CERTAIN UUIDs (UUID string too large)
     @DeleteMapping("{category-id}")
     @ResponseStatus(code = HttpStatus.NO_CONTENT)
     public void deleteCategory (@PathVariable("category-id") String id) {

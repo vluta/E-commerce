@@ -2,9 +2,7 @@ package com.example.ecommerce.api.controllers;
 
 import com.example.ecommerce.api.mappers.CategoryMapper;
 import com.example.ecommerce.api.mappers.ProductMapper;
-import com.example.ecommerce.config.ExchangeRatesConfig;
 import com.example.ecommerce.exceptions.ApiRequestException;
-import com.example.ecommerce.models.DTO.CategoryDTO;
 import com.example.ecommerce.models.DTO.ProductCreationDTO;
 import com.example.ecommerce.models.DTO.ProductDTO;
 import com.example.ecommerce.models.entities.Category;
@@ -13,7 +11,6 @@ import com.example.ecommerce.services.CategoryService;
 import com.example.ecommerce.services.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.Errors;
@@ -21,7 +18,9 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.io.IOException;
-import java.util.*;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @RestController
@@ -47,9 +46,6 @@ public class ProductController {
     public ResponseEntity<ProductDTO> getProductById(@PathVariable("product-id") String id) throws IOException {
         Optional<Product> optProduct = productService.findById(UUID.fromString(id));
         if(optProduct.isPresent()) {
-            // refresh exchange rates
-            //exchangeRatesConfig.setExchangeRatesOnDemand();
-
             return new ResponseEntity<>(productMapper.toDto(optProduct.get()), HttpStatus.OK);
         }
         else {
@@ -65,7 +61,6 @@ public class ProductController {
         if (!optCategory.isPresent()) {
             throw new ApiRequestException(ApiRequestException.Exceptions.getDescription(ApiRequestException.Exceptions.ID_NOT_FOUND, id.toString()));
         } else {
-            // clean repo method names
             List<ProductDTO> products = productService.findByCategories_Id(UUID.fromString(id)).stream()
                     .map(product -> productMapper.toDto(product)).collect(Collectors.toList());
 
@@ -106,25 +101,6 @@ public class ProductController {
         return new ResponseEntity<>(productDTO, HttpStatus.CREATED);
     }
 
-    /*@PostMapping(value = "{speaker-id}/sessions",consumes = "application/json")
-    public ResponseEntity<SessionDTO> createSession(@PathVariable("product-id") String speakerId, @Valid @RequestBody sessionCreationDTO sessionCreationDTO, Errors errors) {
-
-        //1) find speaker to add to session
-        Speaker speaker = speakerService.findById(UUID.fromString(speakerId)).get();
-
-        //2) create session entity from creation DTO
-        Session session = sessionMapper.toSession(sessionCreationDTO);
-
-        //3) add speaker to session entity
-        session.addSpeaker(speaker);
-
-        //4) save entry to db
-        sessionService.save(session);
-
-    }*/
-
-
-
     // add a category to a certain product by id
     @PutMapping(value = "{product-id}/categories/{category-id}")
     public ResponseEntity addCategoryToProductById(@PathVariable("product-id") String productId, @PathVariable("category-id") String categoryId) {
@@ -132,22 +108,13 @@ public class ProductController {
         //TO DO
         //add exception to validate user id
 
-        //Category category = categoryMapper.toCategory(categoryDTO);
-        //category.setProductCollection();
-
-
         // 1) add category to product
         Product product = productService.findById(UUID.fromString(productId)).get();
         Category category = categoryService.findById(UUID.fromString(categoryId)).get();
         product.addCategory(category);
         productService.save(product);
 
-        // TO DO: fix this method
-        //productService.addCategory(categories, UUID.fromString(productId));
-
         return new ResponseEntity<>(HttpStatus.OK);
-        //ProductDTO productDTO = productMapper.toDto(productService.findById(UUID.fromString(productId)).get());
-        //Set<Category> categories = productService.findById(UUID.fromString(productId)).get().getCategories();
     }
 
     // delete a speaker-session relationship
@@ -168,26 +135,9 @@ public class ProductController {
         }
 
         //2) delete old product and category from db
-        //productService.deleteById(UUID.fromString(productId));
         categoryService.deleteById(UUID.fromString(categoryId));
-
-        //3) find category from field set and delete it
-        //product.removeCategory(UUID.fromString(categoryId));
-
-        //4) find product from field set and delete it
-        //category.removeProduct(UUID.fromString(productId));
-
-        //5) save new product in db; entry in link table should be deleted automatically
-        //productService.save(product);
-
-        //6) save new category in db; entry in link table should be deleted automatically
-        //categoryService.save(category);
-
     }
 
-    // delete a participant by id
-    // DELETE method may be implemented with ResponseEntity
-    // DOES NOT WORK FOR CERTAIN UUIDs (UUID string too large)
     @DeleteMapping("{product-id}")
     @ResponseStatus(code = HttpStatus.NO_CONTENT)
     public void deleteProduct (@PathVariable("product-id") String id) {

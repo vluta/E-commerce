@@ -2,7 +2,6 @@ package com.example.ecommerce.services;
 
 import com.example.ecommerce.api.repositories.CategoryRepository;
 import com.example.ecommerce.models.entities.Category;
-import com.example.ecommerce.models.entities.Product;
 import org.springframework.stereotype.Service;
 
 import java.util.Objects;

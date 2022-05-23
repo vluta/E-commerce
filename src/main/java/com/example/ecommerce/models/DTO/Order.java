@@ -14,6 +14,5 @@ import java.util.UUID;
 public class Order {
 
     private Map<UUID, Integer> orderList;
-    //private int nrUnitsOrdered;
     private LocalDate creationDate;
 }

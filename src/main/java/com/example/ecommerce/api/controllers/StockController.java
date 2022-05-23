@@ -1,21 +1,18 @@
 package com.example.ecommerce.api.controllers;
 
-import com.example.ecommerce.api.mappers.CategoryMapper;
 import com.example.ecommerce.api.mappers.ProductMapper;
 import com.example.ecommerce.api.mappers.StockMapper;
 import com.example.ecommerce.api.utils.ExpiredStockMigrationTask;
-import com.example.ecommerce.config.ExchangeRatesConfig;
 import com.example.ecommerce.exceptions.ApiRequestException;
-import com.example.ecommerce.models.DTO.*;
+import com.example.ecommerce.models.DTO.Order;
+import com.example.ecommerce.models.DTO.StockCreationDTO;
+import com.example.ecommerce.models.DTO.StockDTO;
 import com.example.ecommerce.models.entities.Product;
 import com.example.ecommerce.models.entities.Stock;
-import com.example.ecommerce.services.CategoryService;
 import com.example.ecommerce.services.ProductService;
 import com.example.ecommerce.services.StockService;
-import io.swagger.models.auth.In;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.Errors;
@@ -82,7 +79,6 @@ public class StockController {
     public ResponseEntity<Integer> getAvailableProductsByProductId(@PathVariable("product-id") String id) throws IOException {
         int nrOfAvailableProducts = stockService.findNrOfAvailableProductsById(UUID.fromString(id));
 
-        // not sure if id not found scenarios can lead to other nrOfAvailableProducts default values
         if(nrOfAvailableProducts != 0) {
             return new ResponseEntity<>(nrOfAvailableProducts, HttpStatus.OK);
         }
@@ -99,12 +95,6 @@ public class StockController {
             throw new ApiRequestException(ApiRequestException.Exceptions.getDescription(ApiRequestException.Exceptions.BAD_INPUT));
         }
 
-        //Product product = productMapper.toProduct(productCreationDTO);
-
-        //ProductDTO productDTO = productMapper.toDto(product);
-        //productService.save(product);
-        //return new ResponseEntity<>(productDTO, HttpStatus.CREATED);
-
         Stock stock = stockMapper.toStock(stockCreationDTO);
         stock.setCreationDate(LocalDate.now());
 
@@ -116,12 +106,7 @@ public class StockController {
             throw new ApiRequestException(ApiRequestException.Exceptions.getDescription(ApiRequestException.Exceptions.ID_NOT_FOUND, id.toString()));
         }
 
-        //test expiredStock migration method
-        //expiredStockMigrationTask.migrateExpiredStockOnDemand();
-
-
         stockService.save(stock);
-
         StockDTO stockDTO = stockMapper.toDto(stock);
         return new ResponseEntity<>(stockDTO, HttpStatus.CREATED);
     }
@@ -129,17 +114,6 @@ public class StockController {
     //place an order and update stock
     @PatchMapping("/order")
     public ResponseEntity placeOrder(@Valid @RequestBody Order order, Errors errors) throws JMSException {
-
-        //check if response statuses are ok
-        /*try {
-            stockService.updateStock(order);
-            return new ResponseEntity<>(HttpStatus.OK);
-        } catch (Exception e) {
-
-            System.out.println("An exception occured.");
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-            //throw new ApiRequestException(ApiRequestException.Exceptions.getDescription(ApiRequestException.Exceptions.ID_NOT_FOUND, id.toString()));
-        }*/
 
         stockService.updateStock(order);
         return new ResponseEntity<>(HttpStatus.OK);

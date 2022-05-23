@@ -1,18 +1,14 @@
 package com.example.ecommerce.models.entities;
 
 import lombok.AllArgsConstructor;
-import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.GenericGenerator;
-
 import javax.persistence.*;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
-//@Getter
-//@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
@@ -53,7 +49,6 @@ public class Product {
     public void removeCategory(UUID categoryId) {
         Category category = this.categories.stream().filter(cat -> cat.getId() == categoryId).findFirst().orElse(null);
         if (category != null) this.categories.remove(category);
-        //category.getProductCollection().remove(this);
     }
 
     public UUID getId() {

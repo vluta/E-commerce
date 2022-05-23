@@ -1,7 +1,6 @@
 package com.example.ecommerce.services;
 
 import com.example.ecommerce.api.repositories.ProductRepository;
-import com.example.ecommerce.models.entities.Category;
 import com.example.ecommerce.models.entities.Product;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -9,7 +8,10 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.io.Serializable;
-import java.util.*;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class ProductService implements Serializable {
@@ -42,8 +44,4 @@ public class ProductService implements Serializable {
         return productRepository.findAll(PageRequest.of(0, 3, Sort.by(Sort.Direction.ASC, "price")));
     }
 
-    public void addCategory(Category categories, UUID id) {
-        Objects.requireNonNull(categories);
-        productRepository.addCategory(categories, id);
-    }
 }

@@ -1,18 +1,15 @@
 package com.example.ecommerce.api.controllers;
 
 import com.example.ecommerce.config.ExchangeRatesConfig;
-import com.example.ecommerce.exceptions.ApiRequestException;
-import com.example.ecommerce.models.DTO.StockDTO;
-import com.example.ecommerce.models.entities.Stock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
-import java.util.List;
-import java.util.UUID;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping(path="/currencies", produces = "application/json")

@@ -2,21 +2,15 @@ package com.example.ecommerce.services;
 
 import com.example.ecommerce.api.repositories.ProductRepository;
 import com.example.ecommerce.api.repositories.StockRepository;
-import com.example.ecommerce.exceptions.ApiRequestException;
 import com.example.ecommerce.models.DTO.Order;
 import com.example.ecommerce.models.MessageSender;
-import com.example.ecommerce.models.entities.Product;
 import com.example.ecommerce.models.entities.Stock;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import javax.jms.JMSException;
 import java.io.Serializable;
 import java.util.*;
-import java.util.concurrent.ExecutionException;
 
 @Service
 public class StockService implements Serializable {
@@ -46,8 +40,6 @@ public class StockService implements Serializable {
     }
 
     public List<Stock> findByProduct_IdOrderByCreationDateAsc(UUID id) {
-
-        //return stockRepository.findByProduct_IdOrderByCreationDateAsc(id, Sort.by(Sort.Direction.ASC));
         return stockRepository.findByProductId(id, Sort.by(Sort.Direction.ASC, "creationDate"));
     }
 
@@ -55,13 +47,7 @@ public class StockService implements Serializable {
 
         int nrOfAvailableProducts = 0;
 
-        //List<Stock> stocks = stockRepository.findByProduct_IdOrderByCreationDateAsc(id, Sort.by(Sort.Direction.ASC));
         List<Stock> stocks = stockRepository.findByProductId(id, Sort.by(Sort.Direction.ASC, "creationDate"));
-
-        // implementation for when we want the total number of available products summed up from all stocks of that product
-        //for (Stock stock : stocks) {
-        //    nrOfAvailableProducts += stock.getNrUnits();
-        //}
 
         //implementation for when we want the number of available products from the oldest stock
         nrOfAvailableProducts = stocks.get(0).getNrUnits();
@@ -84,15 +70,12 @@ public class StockService implements Serializable {
                 totalStock += stock.getNrUnits();
             }
             if (totalStock < orderQuantity) {
-                //throw new ApiRequestException(ApiRequestException.Exceptions.getDescription(ApiRequestException.Exceptions.INSUFFICIENT_STOCK));
                 throw new RuntimeException("Insufficient stock!");
             }
 
             // implementation to iterate through stock from oldest to newest and decrease from the oldest non-empty one
             for (Stock stock : stocks) {
                 if (stock.getNrUnits() == 0) {
-                    //stocks.remove(stock);
-                    //stockRepository.deleteById(stock.getId());
                     continue;
                 } else if (stock.getNrUnits() < orderQuantity) {
                     orderQuantity -= stock.getNrUnits();

@@ -1,12 +1,7 @@
 package com.example.ecommerce.models.DTO;
 
 import com.example.ecommerce.config.ExchangeRatesConfig;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.NoArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.validation.annotation.Validated;
-
-import javax.persistence.Column;
 
 @NoArgsConstructor
 public class ProductDTO {

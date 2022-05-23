@@ -1,7 +1,6 @@
 package com.example.ecommerce.models.entities;
 
 import lombok.AllArgsConstructor;
-import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.GenericGenerator;
 
@@ -13,8 +12,6 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
-//@Getter
-//@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
